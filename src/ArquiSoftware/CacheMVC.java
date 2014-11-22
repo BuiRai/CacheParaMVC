@@ -29,22 +29,33 @@ public class CacheMVC {
     /**
      * 
      * @param objeto el objeto a almacenar
+     * @throws ArquiSoftware.ObjetoDuplicadoException
      */
-    public void agregarObjeto(Cacheable objeto){
-        try {
-            jcsCache.put(objeto.getId(), objeto);
-        } catch (CacheException ex) {
-            Logger.getLogger(CacheMVC.class.getName()).log(Level.SEVERE, null, ex);
+    public void agregarObjeto(Cacheable objeto) throws ObjetoDuplicadoException{
+        if (!existenciaDeObjeto(objeto.getId())) {
+            try {
+                jcsCache.put(objeto.getId(), objeto);
+            } catch (CacheException ex) {
+                Logger.getLogger(CacheMVC.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            throw new ObjetoDuplicadoException();
         }
+        
     }
     
     /**
      * 
      * @param id el identificador del objeto
      * @return 
+     * @throws ArquiSoftware.ObjetoDesconocidoException 
      */
-    public Cacheable obtenerObjeto(int id){
-        return (Cacheable)jcsCache.get(id);
+    public Cacheable obtenerObjeto(int id) throws ObjetoDesconocidoException{
+        if (existenciaDeObjeto(id)) {
+            return (Cacheable)jcsCache.get(id);
+        }else{
+            throw new ObjetoDesconocidoException();
+        } 
     }
     
     /**
@@ -55,7 +66,7 @@ public class CacheMVC {
      */
     public boolean existenciaDeObjeto(int id){
         Cacheable object;
-        object = obtenerObjeto(id);
+        object = (Cacheable)jcsCache.get(id);
         return object != null;
     }
     
