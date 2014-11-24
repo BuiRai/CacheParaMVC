@@ -16,6 +16,7 @@ import org.apache.jcs.access.exception.CacheException;
  */
 public class CacheMVC {
     private JCS jcsCache;
+    private final int MAX_ELEMENTS = 1000;
     
     public CacheMVC(){
         try {
@@ -50,11 +51,12 @@ public class CacheMVC {
      * @return 
      * @throws ArquiSoftware.ObjetoDesconocidoException 
      */
-    public Cacheable obtenerObjeto(int id) throws ObjetoDesconocidoException{
+    public Cacheable obtenerObjeto(int id) {//throws ObjetoDesconocidoException{
         if (existenciaDeObjeto(id)) {
             return (Cacheable)jcsCache.get(id);
         }else{
-            throw new ObjetoDesconocidoException();
+            return null;
+            //throw new ObjetoDesconocidoException();
         } 
     }
     
@@ -68,6 +70,13 @@ public class CacheMVC {
         Cacheable object;
         object = (Cacheable)jcsCache.get(id);
         return object != null;
+    }
+
+    /**
+     * @return el numero maximo de elementos que almacena el cache
+     */
+    public int getMAX_ELEMENTS() {
+        return MAX_ELEMENTS;
     }
     
 }
