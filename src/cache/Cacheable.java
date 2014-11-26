@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ArquiSoftware;
+package cache;
+
+import java.io.Serializable;
 
 /**
  *
  * @author BuiRai
  */
-public class FileConfigurationException extends Exception{
+public interface Cacheable extends Serializable {
 
-    public FileConfigurationException() {
-        super("Archivo de configuracion mal configurado");
-    }
-    
+    public int getId();
+
 }
