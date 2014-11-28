@@ -74,6 +74,18 @@ public class Cache {
         return object != null;
     }
 
+    public void eliminarObjeto(Cacheable objeto) {
+        if (existenciaDeObjeto(objeto.getId())) {
+            try {
+                jcsCache.remove(objeto.getId());
+            } catch (CacheException ex) {
+                Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            System.out.println("No se encontro al objeto");
+        }
+    }
+    
     /**
      * @return el numero maximo de elementos que almacena el cache
      */
