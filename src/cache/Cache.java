@@ -1,27 +1,36 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cache;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.jcs.JCS;
 import org.apache.jcs.access.exception.CacheException;
 
-/**
- *
- * @author BuiRai
- */
 public class Cache {
 
     private JCS jcsCache;
-    private final int MAX_ELEMENTS = 1000;
+    private static Cache instancia;
 
-    public Cache() throws FileConfigurationException {
+    /**
+     * Singleton
+     *
+     * @return instancia de Cache
+     * @throws FileConfigurationException
+     */
+    public static Cache getInstancia() throws FileConfigurationException {
+        if (instancia == null) {
+            return new Cache();
+        } else {
+            return instancia;
+        }
+    }
+
+    /**
+     * Constructor privado de Cache
+     *
+     * @throws FileConfigurationException
+     */
+    private Cache() throws FileConfigurationException {
         try {
             // Se carga el cache usando el archivo de configuracion
             jcsCache = JCS.getInstance("Cache");
@@ -31,42 +40,40 @@ public class Cache {
     }
 
     /**
+     * Agrega el objeto especificado a la memoria caché
      *
      * @param objeto el objeto a almacenar
      * @throws cache.ObjetoDuplicadoException
      */
     public void agregarObjeto(Cacheable objeto) throws ObjetoDuplicadoException {
-        if (!existenciaDeObjeto(objeto.getId())) {
-            try {
-                jcsCache.put(objeto.getId(), objeto);
-            } catch (CacheException ex) {
-                Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
+        try {
+            jcsCache.put(objeto.getId(), objeto);
+        } catch (CacheException ex) {
             throw new ObjetoDuplicadoException();
         }
 
     }
 
     /**
+     * Obtiene de la caché un objeto tipo Cacheable a partir del id especificado
      *
      * @param id el identificador del objeto
-     * @return
+     * @return el objeto que se obtuvo del caché
      * @throws cache.ObjetoDesconocidoException
      */
-    public Cacheable obtenerObjeto(int id) {//throws ObjetoDesconocidoException {
+    public Cacheable obtenerObjeto(int id) throws ObjetoDesconocidoException {
         if (existenciaDeObjeto(id)) {
             return (Cacheable) jcsCache.get(id);
         } else {
-            return null;
-//            throw new ObjetoDesconocidoException();
+            throw new ObjetoDesconocidoException();
         }
     }
 
     /**
+     * Método que verifica si un objeto se encuentra en la caché
      *
      * @param id el identificador asociado al objeto que se desee encontrar
-     * @return true si el objeto existe false si no existe
+     * @return true si el objeto existe, false si no existe
      */
     public boolean existenciaDeObjeto(int id) {
         Cacheable object;
@@ -74,40 +81,46 @@ public class Cache {
         return object != null;
     }
 
-    public void eliminarObjeto(Cacheable objeto) {
-        if (existenciaDeObjeto(objeto.getId())) {
-            try {
-                jcsCache.remove(objeto.getId());
-            } catch (CacheException ex) {
-                Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            System.out.println("No se encontro al objeto");
+    /**
+     * Método que elimina un objeto de la memoria caché
+     *
+     * @param objeto el objeto que se desea eliminar de la caché
+     * @throws ObjetoDesconocidoException
+     */
+    public void eliminarObjeto(Cacheable objeto) throws ObjetoDesconocidoException {
+        try {
+            jcsCache.remove(objeto.getId());
+        } catch (CacheException ex) {
+            throw new ObjetoDesconocidoException();
         }
     }
     
     /**
-     * @return el numero maximo de elementos que almacena el cache
+     * Método que elimina un objeto de la memoria caché
+     *
+     * @param id el identificador del objeto que se desea eliminar de la caché
+     * @throws ObjetoDesconocidoException
      */
-    public int getMAX_ELEMENTS() {
-        return MAX_ELEMENTS;
+    public void eliminarObjeto(int id) throws ObjetoDesconocidoException {
+        try {
+            jcsCache.remove(id);
+        } catch (CacheException ex) {
+            throw new ObjetoDesconocidoException();
+        }
     }
     
-//    public ArrayList<Cacheable> toArray() {
-//        ArrayList<Cacheable> objetos = new ArrayList<>();
-//        //Se recorre la cache para agregar los objetos que tenga dentro:
-//        for (int i = 1; i < MAX_ELEMENTS; i++) {
-//            if (existenciaDeObjeto(i)) {
-//                try {
-//                    objetos.add((Cacheable) obtenerObjeto(i));
-//                } catch (ObjetoDesconocidoException ex) {
-//                    Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            } else {
-//                break;
-//            }
-//        }
-//        return objetos;
-//    }
+    public ArrayList toArray(int inicio, int fin) {
+        ArrayList<Cacheable> arreglo = new ArrayList<>();
+        for (int i = inicio; i <= fin; i++) {
+            try {
+                arreglo.add(obtenerObjeto(i));
+            } catch (ObjetoDesconocidoException ex) {
+                Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return arreglo;
+        
+    }
 
 }
