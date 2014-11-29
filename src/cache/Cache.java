@@ -94,7 +94,7 @@ public class Cache {
             throw new ObjetoDesconocidoException();
         }
     }
-    
+
     /**
      * Método que elimina un objeto de la memoria caché
      *
@@ -108,7 +108,15 @@ public class Cache {
             throw new ObjetoDesconocidoException();
         }
     }
-    
+
+    /**
+     * Devuelve un ArrayList con los atributos contenidos entre los índices
+     * especificados
+     *
+     * @param inicio índice del primer elemento
+     * @param fin índice del último elemento
+     * @return
+     */
     public ArrayList toArray(int inicio, int fin) {
         ArrayList<Cacheable> arreglo = new ArrayList<>();
         for (int i = inicio; i <= fin; i++) {
@@ -118,9 +126,9 @@ public class Cache {
                 Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         return arreglo;
-        
+
     }
 
 }
