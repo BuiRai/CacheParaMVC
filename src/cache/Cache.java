@@ -117,14 +117,10 @@ public class Cache {
      * @param fin índice del último elemento
      * @return
      */
-    public ArrayList toArray(int inicio, int fin) {
+    public ArrayList<Cacheable> toArray(int inicio, int fin) throws ObjetoDesconocidoException {
         ArrayList<Cacheable> arreglo = new ArrayList<>();
         for (int i = inicio; i <= fin; i++) {
-            try {
                 arreglo.add(obtenerObjeto(i));
-            } catch (ObjetoDesconocidoException ex) {
-                Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
 
         return arreglo;
