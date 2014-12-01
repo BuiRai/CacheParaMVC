@@ -127,4 +127,12 @@ public class Cache {
 
     }
 
+    public void vaciarCache() {
+        try {
+            jcsCache.clear();
+        } catch (CacheException ex) {
+            Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 }
